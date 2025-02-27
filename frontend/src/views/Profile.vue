@@ -39,6 +39,8 @@ onMounted(async () => {
         const response = await fetch("http://localhost:3001/auth/me", {
             headers: { Authorization: `Bearer ${token}` },
         });
+        console.log('onMounted', response);
+        
 
         if (response.ok) {
             const data = await response.json();
@@ -69,7 +71,7 @@ async function uploadAvatar(event) {
         });
 
         const data = await response.json();
-        if (response.ok) {
+        if (response.success) {
             // ✅ 直接使用相对路径，避免 CORS 问题
             avatarUrl.value = `http://localhost:3001${data.avatarUrl}`;
         } else {

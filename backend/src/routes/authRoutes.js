@@ -2,14 +2,15 @@ const Router = require("koa-router");
 const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs");
+const bcrypt = require("bcrypt");
 const multer = require("@koa/multer");
 const { createUser, authenticateUser } = require("../services/userService");
 
 const router = new Router();
 const upload = multer({ dest: "uploads/" });
-const SECRET_KEY = process.env.JWT_SECRET || "secret_key";
 
-const dbPath = path.join(__dirname, "../../database.json");
+const dbPath = path.join(__dirname, "../../users.json");
+const SECRET_KEY = process.env.JWT_SECRET || "secret_key";
 
 const extractToken = (ctx) => {
   const authHeader = ctx.headers.authorization;
@@ -20,34 +21,32 @@ const extractToken = (ctx) => {
 };
 
 // **加载数据库**
-function loadDatabase() { 
+function loadDatabase() {
   return JSON.parse(fs.readFileSync(dbPath));
+}
+
+function saveDatabase(data) {
+  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
 }
 
 // 用户注册
 router.post("/register", async (ctx) => {
   const db = loadDatabase();
-  console.log("db", db); // ✅ 调试
-  
-  const { username, password } = ctx.request.body;
-  console.log("username", username); // ✅ 调试
-  console.log("password", password); // ✅ 调试
-  
 
+  const { username, password } = ctx.request.body;
   if (!username || !password) {
     ctx.status = 400;
     ctx.body = { error: "用户名和密码不能为空" };
     return;
   }
 
-  if (db.users[username]) {
+  if (db.users && db.users[username]) {
     ctx.status = 400;
     ctx.body = { error: "用户已存在" };
     return;
   }
 
   const result = await createUser(username, password);
-  console.log("createUser", createUser);
 
   if (result.error) {
     ctx.status = 400;
@@ -55,6 +54,7 @@ router.post("/register", async (ctx) => {
   } else {
     ctx.body = { success: true };
     const hashedPassword = await bcrypt.hash(password, 10); // ✅ 加密密码
+
     db.users[username] = { username, password: hashedPassword };
     saveDatabase(db);
   }
@@ -72,27 +72,35 @@ router.post("/login", async (ctx) => {
   }
 
   const storedUser = db.users[username];
-  console.log("用户信息：", storedUser); // ✅ 调试
-  console.log("输入密码：", password); // ✅ 调试
-  console.log("存储密码：", storedUser.password); // ✅ 调试
+
+  if (!storedUser) {
+    ctx.status = 401;
+    ctx.body = { error: "用户名或密码错误" };
+    return;
+  }
+
   const passwordMatch = await bcrypt.compare(password, storedUser.password);
 
   const result = await authenticateUser(username, password);
   if (result.error) {
     ctx.status = 401;
-    ctx.body = { error: result.error };
+    ctx.body = { error: result.error, success: false };
   } else if (!passwordMatch) {
     ctx.status = 401;
-    ctx.body = { error: "用户名或密码错误" };
+    ctx.body = { error: "用户名或密码错误", success: false };
     return;
   } else {
     const token = jwt.sign({ username }, SECRET_KEY, { expiresIn: "1h" });
-    ctx.body = { token };
+
+    ctx.body = { token, success: true };
   }
 });
 
 // 获取当前用户信息
 router.get("/me", async (ctx) => {
+  console.log("获取当前用户信息 db"); // ✅ 调试
+  console.log("ctx.headers", ctx.headers); // ✅ 调试
+
   const authHeader = ctx.headers.authorization;
   if (!authHeader) {
     ctx.status = 401;

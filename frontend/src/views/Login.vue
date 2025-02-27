@@ -74,9 +74,13 @@ async function login() {
         });
 
         const data = await response.json();
+        console.log('login', data);
 
-        if (response.ok) {
-            await authStore.login(username.value, password.value);
+
+        if (data.success) {
+
+            await authStore.login(username.value, password.value, data.token); 
+            localStorage.setItem("username", username.value);
             localStorage.setItem("token", data.token);
             router.push("/");
         } else {

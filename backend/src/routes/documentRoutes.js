@@ -11,8 +11,6 @@ const router = new Router();
 
 // **获取所有文档**
 router.get("/documents", async (ctx) => {
-  console.log(ctx.state);
-  
   const db = require("../services/documentService").loadDatabase();
   ctx.body = Object.values(db.documents);
 });
@@ -38,8 +36,6 @@ router.get("/documents/:id", async (ctx) => {
 
 // **更新文档（仅允许所有者）**
 router.put("/documents/:id", async (ctx) => {
-  console.log(ctx.state);
-  
   const user = ctx.state.user.username;
   const { content } = ctx.request.body;
   const doc = getDocument(ctx.params.id);

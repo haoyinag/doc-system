@@ -11,24 +11,26 @@ export const useAuthStore = defineStore("auth", {
   },
 
   actions: {
-    async login(username, password) {
-      const response = await fetch("http://localhost:3001/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+    async login(username, password, token) {
+      this.username = username;
+      this.token = token;
+      // const response = await fetch("http://localhost:3001/auth/login", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ username, password }),
+      // });
 
-      if (response.ok) {
-        const data = await response.json();
-        this.username = username;
-        this.token = data.token;
-        localStorage.setItem("username", username);
-        localStorage.setItem("token", data.token);
-        return true;
-      } else {
-        const error = await response.json();
-        throw new Error(error.message || "登录失败");
-      }
+      // if (response.ok) {
+      //   const data = await response.json();
+      //   this.username = username;
+      //   this.token = data.token;
+      //   localStorage.setItem("username", username);
+      //   localStorage.setItem("token", data.token);
+      //   return true;
+      // } else {
+      //   const error = await response.json();
+      //   throw new Error(error.message || "登录失败");
+      // }
     },
 
     async register(username, password) {

@@ -37,6 +37,8 @@ router.beforeEach(async (to, from, next) => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
+    console.log("response", response);
+
     if (!response.ok) {
       localStorage.removeItem("token");
       return next("/login");

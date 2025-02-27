@@ -64,7 +64,8 @@ async function register() {
 
         const data = await response.json();
 
-        if (response.ok) {
+
+        if (data.success) {
             router.push("/login");
         } else {
             serverError.value = data.error || "注册失败，请重试";

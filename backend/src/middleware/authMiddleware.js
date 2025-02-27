@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 
-module.exports = async (ctx, next) => {
-  console.log(ctx.url);
+const SECRET_KEY = process.env.JWT_SECRET || "secret_key";
+
+module.exports = async (ctx, next) => { 
   if (ctx.url === "/auth/login" || ctx.url === "/auth/register") {
     await next();
   } else {
@@ -11,9 +12,10 @@ module.exports = async (ctx, next) => {
       ctx.body = { error: "未授权访问" };
       return;
     }
-    const token = authHeader.split(" ")[1];
+    const token = authHeader.split(" ")[1]; 
+    
     try {
-      const decoded = jwt.verify(token, "test_123456"); // 替换为你的 JWT 密钥
+      const decoded = jwt.verify(token, SECRET_KEY); // 替换为你的 JWT 密钥
       ctx.state.user = decoded;
       await next();
     } catch (error) {

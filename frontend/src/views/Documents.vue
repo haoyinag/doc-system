@@ -49,7 +49,7 @@ async function createDocument() {
         body: JSON.stringify({ title, content: "" }),
     });
 
-    if (response.ok) {
+    if (response.success) {
         const newDoc = await response.json();
         documents.value.unshift(newDoc);
         router.push(`/editor/${newDoc.id}`);
@@ -66,7 +66,7 @@ async function deleteDocument(id) {
         headers: { "Authorization": authStore.token },
     });
 
-    if (response.ok) {
+    if (response.success) {
         documents.value = documents.value.filter(doc => doc.id !== id);
     } else if (response.status === 403) {
         alert("无权限删除此文档");

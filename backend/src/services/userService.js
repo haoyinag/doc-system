@@ -39,7 +39,8 @@ function saveUsers(data) {
 // 注册用户
 async function createUser(username, password) {
   const db = loadUsers();
-  if (db.users[username]) {
+
+  if (db.users && db.users[username]) {
     return { error: "用户已存在" };
   }
 
@@ -54,10 +55,6 @@ async function createUser(username, password) {
 async function authenticateUser(username, password) {
   const db = loadUsers();
   const user = db.users[username];
-  console.log(user, db.users);
-
-  console.log(password);
-  console.log(user.password);
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return { error: "用户名或密码错误" };
