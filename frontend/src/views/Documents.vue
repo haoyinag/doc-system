@@ -7,9 +7,8 @@
         <ul v-if="documents.length">
             <li v-for="doc in documents" :key="doc.id" class="flex justify-between items-center border-b p-2">
                 <router-link :to="'/editor/' + doc.id" class="text-blue-600 hover:underline flex-1">{{ doc.title
-                }}</router-link>
-                <button v-if="doc.owner === currentUser" @click="deleteDocument(doc.id)"
-                    class="text-red-500 ml-4">删除</button>
+                    }}</router-link>
+                <button @click="deleteDocument(doc.id)" class="text-red-500 ml-4">删除</button>
             </li>
         </ul>
 
@@ -49,7 +48,7 @@ async function createDocument() {
         body: JSON.stringify({ title, content: "" }),
     });
 
-    if (response.success) {
+    if (response.ok) {
         const newDoc = await response.json();
         documents.value.unshift(newDoc);
         router.push(`/editor/${newDoc.id}`);
@@ -66,7 +65,7 @@ async function deleteDocument(id) {
         headers: { "Authorization": authStore.token },
     });
 
-    if (response.success) {
+    if (response.ok) {
         documents.value = documents.value.filter(doc => doc.id !== id);
     } else if (response.status === 403) {
         alert("无权限删除此文档");

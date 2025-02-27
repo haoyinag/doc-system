@@ -71,7 +71,7 @@ async function uploadAvatar(event) {
         });
 
         const data = await response.json();
-        if (response.success) {
+        if (response.ok) {
             // ✅ 直接使用相对路径，避免 CORS 问题
             avatarUrl.value = `http://localhost:3001${data.avatarUrl}`;
         } else {

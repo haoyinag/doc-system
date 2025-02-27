@@ -30,7 +30,8 @@ async function loadDocument() {
     const response = await fetchWithAuth(`http://localhost:3001/api/documents/${docId}`);
     const doc = await response.json();
 
-    if (response.success) {
+    console.log('loadDocument: ', response, doc);
+    if (response.ok) {
         docTitle.value = doc.title;
         content.value = doc.content || "";
     } else {
@@ -54,7 +55,11 @@ async function saveDocument() {
         body: JSON.stringify({ content: content.value }),
     });
 
-    if (response.success) {
+
+
+    if (response.ok) {
+        const doc = await response.json();
+        console.log('saveDocument: ', response, doc);
         alert("文档已保存！");
     } else {
         alert("保存失败，请重试");

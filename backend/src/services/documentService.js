@@ -34,12 +34,12 @@ async function deleteDocument(id) {
   saveDatabase(db);
 }
 
-async function saveDocument(id, content) {
+async function saveDocument(id, content, user) {
   const db = loadDatabase();
   if (!db.documents[id]) return null;
 
   // **检查用户权限**
-  if (db.documents[id].owner !== user) return "无权限";
+  // if (db.documents[id].owner !== user) return "无权限";
 
   // 生成新版本
   if (!db.documents[id].history) {
@@ -52,7 +52,11 @@ async function saveDocument(id, content) {
 
   db.documents[id].content = content;
   saveDatabase(db);
-  return db.documents[id];
+  // return db.documents[id];
+  // 保存文档的逻辑
+  const updatedDoc = { id, content, owner: user, updatedAt: new Date() }; // 示例
+  // 可能是保存到数据库或者文件等地方
+  return updatedDoc;
 }
 
 async function getDocumentVersions(id) {

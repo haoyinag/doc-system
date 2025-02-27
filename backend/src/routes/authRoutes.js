@@ -98,9 +98,6 @@ router.post("/login", async (ctx) => {
 
 // 获取当前用户信息
 router.get("/me", async (ctx) => {
-  console.log("获取当前用户信息 db"); // ✅ 调试
-  console.log("ctx.headers", ctx.headers); // ✅ 调试
-
   const authHeader = ctx.headers.authorization;
   if (!authHeader) {
     ctx.status = 401;
