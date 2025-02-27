@@ -4,7 +4,11 @@ const path = require("path");
 const fs = require("fs");
 const bcrypt = require("bcrypt");
 const multer = require("@koa/multer");
-const { createUser, authenticateUser } = require("../services/userService");
+const {
+  saveUsers,
+  createUser,
+  authenticateUser,
+} = require("../services/userService");
 
 const router = new Router();
 const upload = multer({ dest: "uploads/" });

@@ -66,16 +66,19 @@ async function uploadAvatar(event) {
     try {
         const response = await fetch("http://localhost:3001/auth/upload-avatar", {
             method: "POST",
-            headers: { Authorization: `Bearer ${token}` }, // ✅ 需要 Authorization 头
+            headers: { Authorization: `Bearer ${token}` }, // 需要 Authorization 头
             body: formData,
         });
 
         const data = await response.json();
         console.log('uploadAvatar', data);
-        
+
         if (response.ok) {
-            // ✅ 直接使用相对路径，避免 CORS 问题
+            // 保存返回的头像路径
             avatarUrl.value = `http://localhost:3001${data.avatarUrl}`;
+
+            // 更新头像显示
+            document.getElementById("avatar-img").src = avatarUrl.value;  // 假设你有一个 <img id="avatar-img" /> 元素
         } else {
             error.value = data.error;
         }
@@ -83,6 +86,5 @@ async function uploadAvatar(event) {
         error.value = "头像上传失败，请稍后重试";
     }
 }
-
 
 </script>

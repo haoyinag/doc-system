@@ -80,4 +80,10 @@ async function changePassword(username, oldPassword, newPassword) {
 
 const upload = multer({ storage });
 
-module.exports = { createUser, authenticateUser, changePassword, upload };
+module.exports = {
+  createUser,
+  saveUsers,
+  authenticateUser,
+  changePassword,
+  upload,
+};
