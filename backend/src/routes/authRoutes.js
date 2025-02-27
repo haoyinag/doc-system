@@ -161,6 +161,21 @@ router.post("/upload-avatar", upload.single("avatar"), async (ctx) => {
   fs.renameSync(ctx.file.path, newFilePath);
 
   ctx.body = { avatarUrl: `/uploads/${newFileName}` };
+
+  // 获取用户信息并更新头像路径
+  const db = loadDatabase();
+  const username = ctx.state.user.username; // 获取当前用户
+  const user = db.users[username];
+  if (!user) {
+    ctx.status = 404;
+    ctx.body = { error: "用户未找到" };
+    return;
+  }
+
+  user.avatar = avatarUrl; // 保存头像路径到用户信息
+  saveUsers(db); // 更新数据库
+
+  ctx.body = { avatarUrl }; // 返回头像路径
 });
 
 // ✅ **修正头像获取 API**

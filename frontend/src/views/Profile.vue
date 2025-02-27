@@ -39,13 +39,13 @@ onMounted(async () => {
         const response = await fetch("http://localhost:3001/auth/me", {
             headers: { Authorization: `Bearer ${token}` },
         });
-        console.log('onMounted', response);
-        
+
 
         if (response.ok) {
             const data = await response.json();
+            console.log('onMounted', data);
             username.value = data.username;
-            avatarUrl.value = `http://localhost:3001/auth/avatar/${username.value}`;
+            avatarUrl.value = `http://localhost:3001/uploads/${username.value}`;
         } else {
             localStorage.removeItem("token");
         }
@@ -71,6 +71,8 @@ async function uploadAvatar(event) {
         });
 
         const data = await response.json();
+        console.log('uploadAvatar', data);
+        
         if (response.ok) {
             // ✅ 直接使用相对路径，避免 CORS 问题
             avatarUrl.value = `http://localhost:3001${data.avatarUrl}`;
